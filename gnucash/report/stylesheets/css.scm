@@ -28,7 +28,8 @@
 (use-modules (srfi srfi-13))
 (use-modules (gnucash html))
 
-(define default-css "/* default style */
+;; DEFAULT style
+(define default-css "/* DEFAULT style */
 @media (prefers-color-scheme: dark) {
     body {
         color: #000; background-color: #fff;
@@ -41,8 +42,8 @@ html, body {
     margin-bottom: 0px;
     margin-left: 8px;
     margin-right: 8px;
-    font-family: \"Noto Sans\", Sans-Serif;
-    font-size: 10pt;
+    font-family: FreeSans, \"Noto Sans\", Sans-Serif;
+    font-size: 10.5pt;
 }
 
 body, p, table, tr, td, a, th {
@@ -50,7 +51,7 @@ body, p, table, tr, td, a, th {
 }
 
 h3 {
-    font-size: 15pt;
+    font-size: 13pt;
     font-weight: bold;
 }
 
@@ -64,7 +65,7 @@ td, th {
 }
 
 tr.alternate-row {
-    background: #ffffff
+    background: #ececec;
 }
 
 tr {
@@ -104,22 +105,205 @@ td.highlight {
     background-color: #e1e1e1
 }
 
+ td.text-cell {
+     /* placeholder */
+}
+
 @media print {
     html, body {
         height: unset;
     }
 }
+
+tr.primary-subheading > td, tr:has(> td.total-number-cell) > td {
+     background-color: #ececec;
+}
+tr.grand-total td {
+     background: #ececec !important;
+}
 ")
 
-(define (css-options)
+;; EASY style converted to CSS
+(define easy-css "/* EASY style */
+ @media (prefers-color-scheme: dark) {
+     body {
+         color: #000;
+         background-color: #FFF;
+    }
+}
+
+ html, body {
+     height: 100vh;
+     margin-top: 0px;
+     margin-bottom: 0px;
+     max-width: max-content;
+     margin:0 auto;
+     font-family: FreeSans, \"Noto Sans\", Sans-Serif;
+     font-size: 10.5pt;
+}
+
+ body, p, table, tr, td, a {
+     vertical-align: top;
+}
+
+ th {
+     vertical-align: bottom;
+}
+
+ table {
+     border-spacing: 2px;
+     border-collapse: separate;
+     max-width: max-content;
+     margin: 0 auto;
+}
+
+ h3 {
+     font-size: 13pt;
+     font-weight: bold;
+}
+
+ a {
+     color: #b22222;
+}
+
+ td, th {
+     padding: 2px;
+}
+
+tr.alternate-row td, tr.normal-row td {
+     padding: 2px 5px 2px 5px;
+}
+
+ tr.alternate-row {
+     background: #ececec;
+}
+
+ tr {
+     page-break-inside: avoid !important;
+}
+
+ td.total-number-cell, td.total-label-cell, td.centered-label-cell {
+     font-size: 12pt;
+     font-weight: bold;
+}
+
+ th.column-heading-left {
+     text-align: left;
+}
+
+ td.centered-label-cell, th.column-heading-center {
+     text-align: center;
+}
+
+ td.number-header, th.column-heading-right, td.number-cell, td.total-number-cell {
+     text-align: right;
+}
+
+ td.neg {
+     color: red;
+}
+
+ td.number-cell, td.total-number-cell, td.anchor-cell, td.date-cell {
+     white-space: nowrap;
+}
+
+ td.highlight {
+     background-color: #e1e1e1;
+}
+
+tr.spacer {
+      height: 25px;
+}
+
+.primary-subheading {
+     color: #000;
+     background-color: #eee8aa;
+}
+
+/* Source-Account Title + Account Summary Category */
+ tbody tr.primary-subheading:first-child  td, tr.spacer + tr.primary-subheading  td, tr:has(th.number-header) + tr:has(td.anchor-cell) > td, tr.primary-subheading + tr:has(td.anchor-cell) > td {
+     padding: 5px 0px 5px 5px;
+}
+
+/* Account Summary - Category  - bold */
+ tr:has(th.number-header) + tr:has(td.anchor-cell) > td, tr.primary-subheading + tr:has(td.anchor-cell) > td {
+     font-weight: bold;
+     background-color: #eee8aa;
+}
+
+/* Account Summary - Category  - summary */
+tr.primary-subheading:has(td.anchor-cell) td {
+     background-color: #fff
+}
+
+/* Transactions - Total For */
+ tr.primary-subheading:has( + tr.spacer + tr.primary-subheading) td, tr.primary-subheading:has( + tr.spacer + tr.grand-total) td {
+     border-top: 2px solid red;
+     text-align: center;
+     background: #E1E8E1;
+     padding: 5px 0px 5px 0px;
+}
+
+ tr.grand-total td {
+     background: #faf88c !important;
+     padding: 5px 0px 5px 0px;
+}
+
+/* Transaction - Legend at the end margin */
+ table:has(tr.grand-total) {
+     margin-bottom: 25px;
+}
+
+/* Transactions  -  Description Length */
+ td.date-cell + td.text-cell + td.text-cell {
+     /* max-width: 70vw; */
+}
+
+/* Transactions  -  subtotal table, total label */
+ .subtotal-table-total {
+     font-weight: bold;
+     text-decoration: underline;
+     text-align: center;
+}
+
+.transactions-total-for {
+     font-weight: normal;
+     margin-right: 5px;
+}
+
+ td.date-cell, td.text-cell {
+     padding-left: 9px;
+     padding-right: 9px;
+}
+
+ @media print {
+    html, body {
+       height: unset;
+    }
+}
+
+/* fixing standalone charts (all center-aligned ones are squashed)*/
+ html > body > div > canvas.chartjs-render-monitor {
+     width: 100vw !important;
+}
+")
+
+(define (css-options css-param)
   (let ((options (gnc-new-optiondb)))
 
     (gnc-register-text-option options
       (N_ "General") (N_ "CSS") "a"
       (N_ "CSS code. This field specifies the CSS code for styling reports.")
-      default-css)
-
+      css-param)
     options))
+
+(define (css-options-default)
+    (css-options default-css)
+)
+
+(define (css-options-easy)
+    (css-options easy-css)
+)
 
 (define (css-renderer options doc)
 
@@ -195,11 +379,31 @@ td.highlight {
      'tag "td"
      'attribute (list "class" "centered-label-cell"))
 
-    (gnc:html-document-set-style! ssdoc "normal-row" 'tag "tr")
-    (gnc:html-document-set-style! ssdoc "alternate-row" 'tag "tr")
-    (gnc:html-document-set-style! ssdoc "primary-subheading" 'tag "tr")
-    (gnc:html-document-set-style! ssdoc "secondary-subheading" 'tag "tr")
-    (gnc:html-document-set-style! ssdoc "grand-total" 'tag "tr")
+    (gnc:html-document-set-style!
+     ssdoc "normal-row"
+     'tag "tr"
+     'attribute (list "class" "normal-row"))
+
+    (gnc:html-document-set-style!
+     ssdoc "alternate-row"
+     'tag "tr"
+     'attribute (list "class" "alternate-row"))
+
+    (gnc:html-document-set-style!
+     ssdoc "primary-subheading"
+     'tag "tr"  'attribute (list "class" "primary-subheading"))
+
+    (gnc:html-document-set-style!
+     ssdoc "secondary-subheading"
+     'tag "tr" 'attribute (list "class" "secondary-subheading"))
+
+    (gnc:html-document-set-style!
+     ssdoc "grand-total"
+     'tag "tr" 'attribute (list "class" "grand-total"))
+
+    (gnc:html-document-set-style!
+     ssdoc "spacer"
+     'tag "tr"  'attribute (list "class" "spacer"))
 
     (cond
      ((string-contains-ci all-css "</style")
@@ -223,6 +427,13 @@ td.highlight {
  'version 1
  'name (N_ "CSS")
  'renderer css-renderer
- 'options-generator css-options)
+ 'options-generator css-options-default)
+
+(gnc:define-html-style-sheet
+ 'version 1
+ 'name (N_ "CSS_Easy")
+ 'renderer css-renderer
+ 'options-generator css-options-easy)
 
 (gnc:make-html-style-sheet "CSS" (N_ "CSS-based stylesheet (experimental)"))
+(gnc:make-html-style-sheet "CSS_Easy" (N_ "CSS-based - Easy"))
