@@ -224,6 +224,8 @@
                                      (cons 'xPadding 8)
                                      (cons 'yPadding 9)
                                      (cons 'bodySpacing 3)
+                                     (cons 'bodyFontSize 15)
+                                     (cons 'titleFontSize 16)
                                      (cons 'callbacks (list
                                                        (cons 'label #f)))))
 
@@ -394,14 +396,15 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 var toLocaleStringSupportsOptions = (typeof Intl == 'object' && Intl && typeof Intl.NumberFormat == 'function');
 
-// format a number e.g. 2.5 into monetary e.g. \"$2.50\" or other style formsty
-function numformat(amount) {
-  if (toLocaleStringSupportsOptions) {
+// format a number e.g. 2.5 into monetary e.g. \"2.50 $\" or other style formsty
+ function numformat(amount) {
+  if (formsty == 'percent') {
+      return (100 * amount).toLocaleString() + ' %';
+   } else if (formsty == 'currency') {
+      return amount.toLocaleString() + ' ' + currsym
+  } else if (toLocaleStringSupportsOptions) {
+      // this one has been moved lower since browsers' presentation vary
       return amount.toLocaleString(undefined, {style:formsty, currency:curriso});
-  } else if (formsty == 'percent') {
-      return (100 * amount).toLocaleString() + '%';
-  } else if (formsty == 'currency') {
-      return currsym + amount.toLocaleString();
   } else {
       return amount.toLocaleString();
   }
