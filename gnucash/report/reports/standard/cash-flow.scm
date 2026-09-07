@@ -81,7 +81,7 @@
 
     (gnc-register-simple-boolean-option options
       gnc:pagename-general optname-show-selected-acct
-      "f" (N_ "Show the list of selected accounts on the top of this report.") #t)
+      "f" (N_ "Show the list of selected accounts on the top of this report.") #f)
 
     ;; accounts to work on
     (gnc:options-add-account-selection!
@@ -253,7 +253,7 @@
             (when show-sel-acct-list?
               (gnc:html-document-add-object!
                doc
-               (gnc:make-html-text (G_ "Selected Accounts")))
+               (gnc:make-html-text (G_ "Selected Accounts:")))
 
               (gnc:html-document-add-object!
                doc
@@ -267,7 +267,7 @@
                table
                "primary-subheading"
                (list
-                (G_ "Money into selected accounts comes from")
+                (G_ "Money into selected accounts comes from:")
                 ""))
 
               (add-accounts-flow money-in-accounts money-in-alist)
@@ -276,7 +276,7 @@
                table
                "grand-total"
                (list
-                (gnc:make-html-table-header-cell/markup "text-cell" (G_ "Money In"))
+                (gnc:make-html-table-header-cell/markup "text-cell" (G_ "Money In:"))
                 (gnc:make-html-table-header-cell/markup
                  "total-number-cell"
                  (gnc:sum-collector-commodity
@@ -288,7 +288,7 @@
                table
                "primary-subheading"
                (list
-                (G_ "Money out of selected accounts goes to")
+                (G_ "Money out of selected accounts goes to:")
                 ""))
 
               (add-accounts-flow money-out-accounts money-out-alist)
@@ -297,7 +297,7 @@
                table
                "grand-total"
                (list
-                (gnc:make-html-table-header-cell/markup "text-cell" (G_ "Money Out"))
+                (gnc:make-html-table-header-cell/markup "text-cell" (G_ "Money Out:"))
                 (gnc:make-html-table-header-cell/markup
                  "total-number-cell"
                  (gnc:sum-collector-commodity
@@ -309,7 +309,7 @@
                table
                "grand-total"
                (list
-                (gnc:make-html-table-header-cell/markup "text-cell" (G_ "Difference"))
+                (gnc:make-html-table-header-cell/markup "text-cell" (G_ "Difference:"))
                 (gnc:make-html-table-header-cell/markup
                  "total-number-cell"
                  (gnc:sum-collector-commodity

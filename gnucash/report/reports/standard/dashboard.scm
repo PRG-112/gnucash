@@ -165,7 +165,7 @@
 
     (set-option! options "General" "Report name" (G_ "Dashboard 2.0"))
     (set-option! options "General" "Number of columns" 3)
-    (set-option! options "General" "Stylesheet" "Easy")
+    (set-option! options "General" "Stylesheet" "CSS-based - Easy (experimental)")
 
     ;; mark the reports as needing to be saved
     (gnc:report-set-needs-save?! (gnc-report-find sub-cash-flow) #t)
