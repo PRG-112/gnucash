@@ -536,7 +536,7 @@
                  (string-null? (string-trim-both reconcile-date-string))))
            (get-row-col sxml #f 2)))
         (test-equal "reconciled status subtotal"
-          (list "Total For Unreconciled" "$0.00")
+          (list "Unreconciled" "Total for: " "$0.00")
           (get-row-col sxml -3 #f))
         )
 
@@ -962,7 +962,7 @@
                 "-#51.00" "-#51.00" "-#51.00" "-#51.00" "-#51.00" "-#51.00" "-#612.00" "-#51.00")
           (get-row-col sxml 5 #f))
         (test-equal "summary gbp total-row is correct"
-          (list "Total" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00")
+          (list "Total per Commodity:" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00" "#0.00")
           (get-row-col sxml 6 #f))
         (test-equal "summary total-row is correct"
           (list "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00" "$0.00")
@@ -981,10 +981,10 @@
           (list "Income" "-$29.00" "-$29.00" "-$9.67")
           (get-row-col sxml 3 #f))
         (test-equal "sparse summary-table - row 4"
-          (list "Total" "$0.00" "$11.00" "-$8.00" "$3.00" "$1.00")
+          (list "Total per Commodity:" "$0.00" "$11.00" "-$8.00" "$3.00" "$1.00")
           (get-row-col sxml 4 #f))
         (test-equal "sparse summary-table - col 1"
-          (list "Bank" "Expenses" "Income" "Total")
+          (list "Bank" "Expenses" "Income" "Total per Commodity:")
           (get-row-col sxml #f 1))
         (test-equal "sparse summary-table - col 2"
           (list "$29.00" "-$29.00" "$0.00")
@@ -1111,13 +1111,13 @@
       (set-option! options "General" "End Date" (cons 'absolute (gnc-dmy2time64 31 03 1970)))
       (let ((sxml (options->sxml options "filter reconcile date")))
         (test-equal "test reconciled amounts = $8"
-          (list "Total For Reconciled" "$8.00")
+          (list "Reconciled" "Total for: " "$8.00")
           (get-row-col sxml 3 #f))
         (test-equal "test cleared amounts = $29"
-          (list "Total For Cleared" "$29.00")
+          (list "Cleared" "Total for: " "$29.00")
           (get-row-col sxml 6 #f))
         (test-equal "test unreconciled amounts = $31"
-          (list "Total For Unreconciled" "$31.00")
+          (list "Unreconciled" "Total for: " "$31.00")
           (get-row-col sxml 11 #f))
         sxml)
       )))

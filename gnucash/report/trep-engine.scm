@@ -1067,7 +1067,7 @@ be excluded from periodic reporting.")
                                                            ((primary) (not sec-subtotal?))
                                                            (else #f))))))
                              (if show-prefix?
-                                 (string-append (G_ "Total For ") str)
+                                 (string-append (G_ "<font class=\"transactions-total-for\">Total for: </font>") str)
                                  str))))
          (account-types-to-reverse
           (keylist-get-info sign-reverse-list
@@ -1189,11 +1189,12 @@ be excluded from periodic reporting.")
                        (list (cons 'heading (G_ "Account"))
                              (cons 'renderer-fn
                                    (lambda (split transaction-row?)
-                                     (account-namestring
+                                     (gnc:make-html-table-cell/markup
+                                             "text-cell" (account-namestring
                                       (xaccSplitGetAccount split)
                                       (report-uses? 'account-code)
                                       (report-uses? 'account-name)
-                                      (report-uses? 'account-full-name))))))
+                                      (report-uses? 'account-full-name)))))))
 
                (add-if (or (report-uses? 'other-account-name)
                            (report-uses? 'other-account-code))
@@ -1202,12 +1203,14 @@ be excluded from periodic reporting.")
                                    (lambda (split transaction-row?)
                                      (and (< 1 (xaccTransCountSplits
                                                 (xaccSplitGetParent split)))
+                                        (gnc:make-html-table-cell/markup
+                                          "text-cell"
                                           (account-namestring
                                            (xaccSplitGetAccount
                                             (xaccSplitGetOtherSplit split))
                                            (report-uses? 'other-account-code)
                                            (report-uses? 'other-account-name)
-                                           (report-uses? 'other-account-full-name)))))))
+                                           (report-uses? 'other-account-full-name))))))))
 
                (add-if (report-uses? 'shares)
                        (list (cons 'heading (G_ "Shares"))
@@ -1965,7 +1968,7 @@ be excluded from periodic reporting.")
                  (next (and (pair? rest) (car rest))))
 
             (add-split-row current calculated-cells
-                           (if (or odd-row? (report-uses? 'multiline))
+                           (if odd-row?
                                def:normal-row-style
                                def:alternate-row-style)
                            #t)
@@ -1974,7 +1977,9 @@ be excluded from periodic reporting.")
               (for-each
                (lambda (othersplit)
                  (add-split-row othersplit calculated-cells
-                                def:alternate-row-style #f))
+                                (if odd-row?
+                               def:normal-row-style
+                               def:alternate-row-style) #f))
                (delete current (xaccTransGetSplitList
                                 (xaccSplitGetParent current)))))
 
@@ -2005,6 +2010,9 @@ be excluded from periodic reporting.")
                                 (cons (primary-subtotal-comparator current)
                                       (render-summary current 'primary #f))
                                 'col-total)
+
+             (gnc:html-table-append-row/markup! table "spacer" (list ""))
+
               (for-each
                (lambda (coll)
                  (coll 'reset #f #f))
@@ -2137,7 +2145,7 @@ be excluded from periodic reporting.")
         (append
          (list (cond
                 ((not first?) "")
-                ((eq? row 'row-total) (G_ "Total"))
+                ((eq? row 'row-total) (G_ "<font class=\"subtotal-table-total\">Total per Commodity:</font>"))
                 (else (cdr row))))
          (map (cut make-table-cell row <> commodity 1) list-of-cols)
          (list (make-table-cell row 'col-total commodity 1))

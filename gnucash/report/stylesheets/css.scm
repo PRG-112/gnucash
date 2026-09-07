@@ -142,8 +142,12 @@ tr.grand-total td {
      font-size: 10.5pt;
 }
 
- body, p, table, tr, td, a, th {
+ body, p, table, tr, td, a {
      vertical-align: top;
+}
+
+ th {
+     vertical-align: bottom;
 }
 
  table {
@@ -163,7 +167,11 @@ tr.grand-total td {
 }
 
  td, th {
-     padding:1px;
+     padding: 2px;
+}
+
+tr.alternate-row td, tr.normal-row td {
+     padding: 2px 5px 2px 5px;
 }
 
  tr.alternate-row {
@@ -172,10 +180,6 @@ tr.grand-total td {
 
  tr {
      page-break-inside: avoid !important;
-}
-
- td, th {
-     border-color: grey
 }
 
  td.total-number-cell, td.total-label-cell, td.centered-label-cell {
@@ -207,21 +211,74 @@ tr.grand-total td {
      background-color: #e1e1e1;
 }
 
- tr.primary-subheading > td, tr:has(> td.total-number-cell) > td {
+tr.spacer {
+      height: 25px;
+}
+
+.primary-subheading {
+     color: #000;
      background-color: #eee8aa;
+}
+
+/* Source-Account Title + Account Summary Category */
+ tbody tr.primary-subheading:first-child  td, tr.spacer + tr.primary-subheading  td, tr:has(th.number-header) + tr:has(td.anchor-cell) > td, tr.primary-subheading + tr:has(td.anchor-cell) > td {
+     padding: 5px 0px 5px 5px;
+}
+
+/* Account Summary - Category  - bold */
+ tr:has(th.number-header) + tr:has(td.anchor-cell) > td, tr.primary-subheading + tr:has(td.anchor-cell) > td {
+     font-weight: bold;
+     background-color: #eee8aa;
+}
+
+/* Account Summary - Category  - summary */
+tr.primary-subheading:has(td.anchor-cell) td {
+     background-color: #fff
+}
+
+/* Transactions - Total For */
+ tr.primary-subheading:has( + tr.spacer + tr.primary-subheading) td, tr.primary-subheading:has( + tr.spacer + tr.grand-total) td {
+     border-top: 2px solid red;
+     text-align: center;
+     background: #E1E8E1;
+     padding: 5px 0px 5px 0px;
 }
 
  tr.grand-total td {
      background: #faf88c !important;
+     padding: 5px 0px 5px 0px;
 }
 
- td.text-cell {
-     /* placeholder */
+/* Transaction - Legend at the end margin */
+ table:has(tr.grand-total) {
+     margin-bottom: 25px;
+}
+
+/* Transactions  -  Description Length */
+ td.date-cell + td.text-cell + td.text-cell {
+     /* max-width: 70vw; */
+}
+
+/* Transactions  -  subtotal table, total label */
+ .subtotal-table-total {
+     font-weight: bold;
+     text-decoration: underline;
+     text-align: center;
+}
+
+.transactions-total-for {
+     font-weight: normal;
+     margin-right: 5px;
+}
+
+ td.date-cell, td.text-cell {
+     padding-left: 9px;
+     padding-right: 9px;
 }
 
  @media print {
-     html, body {
-         height: unset;
+    html, body {
+       height: unset;
     }
 }
 
@@ -343,6 +400,10 @@ tr.grand-total td {
     (gnc:html-document-set-style!
      ssdoc "grand-total"
      'tag "tr" 'attribute (list "class" "grand-total"))
+
+    (gnc:html-document-set-style!
+     ssdoc "spacer"
+     'tag "tr"  'attribute (list "class" "spacer"))
 
     (cond
      ((string-contains-ci all-css "</style")
